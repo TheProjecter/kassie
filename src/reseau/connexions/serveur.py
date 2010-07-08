@@ -6,7 +6,7 @@ import sys
 import socket
 import select
 
-from connexions.client_connecte import ClientConnecte
+from reseau.connexions.client_connecte import ClientConnecte
 
 class ConnexionServeur:
     """Cette classe représente le socket en écoute sur le port choisit
@@ -37,11 +37,13 @@ class ConnexionServeur:
           connexions. C'est en fait le Time Out passé à select.select
           quand il s'agit de surveiller les clients qui souhaitent se
           connecter. Ce temps est précisé en seconde (0.05 s = 50 ms)
+          Si on souhaite un Time Out infini mettre cette variable à None.
         - attente_reception : temps indiquant pendant combien de temps
           on attend un message à réceptionner sur les clients déjà connectés.
           Ce nombre est passé comme Time Out de select.select quand il s'agit
           de surveiller les sockets connectés. Ce temps est précisé en seconde
           (0.05 s = 50 ms)
+          Si on souhaite un Time Out infini mettre cette variable à None.
         
         Petite précision sur l'utilité de select.select :
             On utilise cette fonction pour surveiller un certain nombre
@@ -62,7 +64,17 @@ class ConnexionServeur:
         self.attente_connexion = attente_connexion
         self.attente_reception = attente_reception
 
-        # Création du socket serveur
+        self.clients = {} # un dictionnaire {id_client:client}
+
+        # Socket serveur
+        self.socket  = None
+
+    def init(self):
+        """Cette méthode doit être appelée après l'appel au constructeur.
+        Elle se charge d'initialiser le socket serveur et, en somme,
+        de le mettre en écoute sur le port spécifié.
+        """
+        # Initialisation du socket serveur
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         # On paramètre le socket
@@ -77,4 +89,47 @@ class ConnexionServeur:
             sys.exit(1)
 
         # On met en écoute le socket serveur
-        self.socket.listen(nb_clients_attente)
+        self.socket.listen(self.nb_clients_attente)
+
+    def verifier_connexions(self):
+        """Cette méthode vérifie si des clients ne sont pas en attente
+        de connexion. Elle a un comportement bloquant pendant le temps
+        attente_connexion spécifié dans le constructeur de l'objet.
+        Elle se charge d'ajouter les clients connectés à la liste
+        des clients si le nombre maximum de connecté n'est pas excédé.
+        Dans le cas contraire, on envoie au client un message par défaut
+        et on le déconnecte du serveur.
+        """
+        # On attend avec select.select qu'une connexion se présente
+        # Si aucune connexion ne se présente, au bout du temps indiqué
+        # dans self.attente_connexion, select.select s'arrête
+        # en levant une exception select.error
+        try:
+            connexions, none, none = select.select(
+                [self.socket], [], [], self.attente_connexion)
+        except select.error:
+            pass
+
+        # On parcourt la boucle des connexions en attente
+        # En toute logique, elle ne possède qu'un client puisque select.select
+        # s'interrompt dès qu'elle reçoit une demande de connexion
+        for connexion in connexions:
+            # On tente d'accepter la connexion
+            try:
+                socket, infos = connexion.accept()
+            except socket.error:
+                pass
+            else:
+                # On vérifie qu'on peut ajouter un nouveau client
+                if self.nb_max_connectes>=0 \
+                        and len(self.clients) >= self.nb_max_connectes:
+                    # On refuse la connexion
+                    socket.send("Ce serveur ne peut accueillir de connexions " \
+                        "supplementaires.".encode())
+                    socket.close()
+                else:
+                    # On créée notre client avec les infos dont on dispose
+                    client = ClientConnecte(socket, infos)
+                    # On l'ajoute dans le dictionnaire des clients
+                    self.clients[client.id] = client
+                    print("Connexion du client {0}.".format(client))
