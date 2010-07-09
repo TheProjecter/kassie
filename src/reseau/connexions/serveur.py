@@ -104,7 +104,6 @@ class ConnexionServeur:
 
         """
         try:
-            print(self, socket)
             return self.clients[self.filenos[socket.fileno()]]
         except KeyError:
             raise KeyError("le socket n. {0} n'est pas un socket client" \
@@ -133,6 +132,28 @@ class ConnexionServeur:
         self.filenos[socket.fileno()] = client.id
         return client
 
+    def retirer_client(self, client):
+        """Cette méthode se charge de retirer un client des clients
+        connectés.
+
+        On doit mettre à jour self.clients mais aussi self.filenos.
+
+        """
+        if client.id in self.clients.keys():
+            del self.clients[client.id]
+        if client.socket.fileno() in self.filenos.keys():
+            del self.filenos[client.socket.fileno()]
+
+    def verifier_deconnexions(self):
+        """Cette méthode doit être appelée régulièrement pour retirer
+        les clients déconnectés.
+
+        """
+        for client in list(self.clients.values()):
+            if not client.connecte:
+                client.socket.close() # au cas où
+                self.retirer_client(client)
+
     def verifier_connexions(self):
         """Cette méthode vérifie si des clients ne sont pas en attente
         de connexion. Elle a un comportement bloquant pendant le temps
@@ -145,6 +166,7 @@ class ConnexionServeur:
         et on le déconnecte du serveur.
 
         """
+        self.verifier_deconnexions()
         # On attend avec select.select qu'une connexion se présente
         # Si aucune connexion ne se présente, au bout du temps indiqué
         # dans self.attente_connexion, select.select s'arrête
@@ -182,10 +204,12 @@ class ConnexionServeur:
         à réceptionner. Elle se base sur select.select pour cela.
 
         """
+        self.verifier_deconnexions()
         # On attend avec select.select qu'un message soit réceptionné
         # Si aucun message n'est à réceptionner au bout du temps indiqué
         # dans self.attente_reception, select.select s'arrête
         # en levant une exception select.error
+        receptions = []
         try:
             receptions, none, none = select.select(
                 self.get_clients_sockets(), [], [], self.attente_reception)
@@ -200,3 +224,7 @@ class ConnexionServeur:
             if client.message_est_complet():
                 print("Réception de {0} : {1}".format(client.id, \
                         client.get_message()))
+
+        # On vérifie une dernière fois que tous les clients sont bien
+        # connectés
+        self.verifier_deconnexions()

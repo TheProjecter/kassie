@@ -64,7 +64,11 @@ class ClientConnecte:
         On appelle la méthode recv du socket.
 
         """
-        self.message += self.socket.recv(1024)
+        message = self.socket.recv(1024)
+        if message == b"":
+            self.deconnecter("perte de la connexion")
+        else:
+            self.message += message
 
     def message_est_complet(self):
         """Retourne True si le message se termine par un caractère de fin de
@@ -85,19 +89,15 @@ class ClientConnecte:
         premier.
 
         """
-        if self.message == b'': # on déconnecte
-            self.deconnecter("Perte de la connexion du client {0}".format( \
-                    self.id))
-        else:
-            message = self.message
-            message = message.replace(b"\r", b"\n")
-            while message.count(b"\n\n")>0:
-                message = message.replace(b"\n\n", b"\n")
-            messages = message.split(b"\n")
-            self.message = b"\n".join(messages[1:])
-            return messages[0] # on retourne le premier message
+        message = self.message
+        message = message.replace(b"\r", b"\n")
+        while message.count(b"\n\n")>0:
+            message = message.replace(b"\n\n", b"\n")
+        messages = message.split(b"\n")
+        self.message = b"\n".join(messages[1:])
+        return messages[0] # on retourne le premier message
 
-    def deconnecte(self, message):
+    def deconnecter(self, message):
         self.socket.close()
         self.connecte = False
         print("Déconnexion du client {0}: {1}.".format(self.id, message))
