@@ -49,8 +49,8 @@ class ClientConnecte:
     
     def __str__(self):
         """On affiche l'ID du client, son ip et son port entrant"""
-        return "Client {0} ({1}:{2})".format( \
-            self.id, self.adresse_ip, self.port)
+        return "Client {0} ({1}:{2}, {3})".format( \
+            self.id, self.adresse_ip, self.port, self.socket.fileno())
 
     def envoyer(self, message):
         """Envoie d'un message au socket.

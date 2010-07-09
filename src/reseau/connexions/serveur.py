@@ -66,6 +66,9 @@ class ConnexionServeur:
 
         self.clients = {} # un dictionnaire {id_client:client}
 
+        # Dictionnaire permettant, depuis un socket, de retrouver l'ID client
+        self.filenos={} # correspondance {fileno_du_socket,id_client}
+
         # Socket serveur
         self.socket  = None
 
@@ -91,14 +94,49 @@ class ConnexionServeur:
         # On met en écoute le socket serveur
         self.socket.listen(self.nb_clients_attente)
 
+    def get_client_depuis_socket(self, socket):
+        """Cette méthode retourne le client connecté, en fonction du
+        socket passé en paramètre. On se base sur le fileno() du socket
+        pour retrouver l'ID du client et sur le dictionnaaire filenos
+        faisant la correspondance.
+
+        On retourne le client trouvé.
+
+        """
+        try:
+            print(self, socket)
+            return self.filenos[socket.fileno()]
+        except KeyError:
+            raise KeyError("le socket n. {0} n'est pas un socket client" \
+                    .format(socket.fileno()))
+
+    def ajouter_client(self, socket, infos):
+        """Cette méthode se charge d'ajouter un client connecté au
+        dictionnaire des clients. On en profite pour remplir le dictionnaire
+        faisant la correspondance entre ID client et fileno() de socket.
+
+        On retourne le client créé et ajouté.
+
+        """
+        client = ClientConnecte(socket, infos)
+        # On ajoute le client au dictionnaire des clients (id-client)
+        self.clients[client.id] = client
+
+        # On renseigne le dictionnaire {socket.fileno():id_client}
+        self.filenos[socket.fileno()] = client.id
+        return client
+
     def verifier_connexions(self):
         """Cette méthode vérifie si des clients ne sont pas en attente
         de connexion. Elle a un comportement bloquant pendant le temps
         attente_connexion spécifié dans le constructeur de l'objet.
+
         Elle se charge d'ajouter les clients connectés à la liste
         des clients si le nombre maximum de connecté n'est pas excédé.
+
         Dans le cas contraire, on envoie au client un message par défaut
         et on le déconnecte du serveur.
+
         """
         # On attend avec select.select qu'une connexion se présente
         # Si aucune connexion ne se présente, au bout du temps indiqué
@@ -128,8 +166,6 @@ class ConnexionServeur:
                         "supplementaires.".encode())
                     socket.close()
                 else:
-                    # On créée notre client avec les infos dont on dispose
-                    client = ClientConnecte(socket, infos)
-                    # On l'ajoute dans le dictionnaire des clients
-                    self.clients[client.id] = client
+                    # On créée notre client
+                    client = self.ajouter_client(socket, infos)
                     print("Connexion du client {0}.".format(client))
