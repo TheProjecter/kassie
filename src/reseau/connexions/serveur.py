@@ -1,6 +1,16 @@
 # -*-coding:Utf-8 -*
 
-"""Ce fichier définit la classe ConnexionServeur détaillée plus bas."""
+"""Ce fichier définit la classe ConnexionServeur détaillée plus bas.
+
+Pour créer un serveur opérationnel, quelques instructions suffisent :
+
+>>> serveur = ConnexionServeur(4000) # test sur le port 4000
+>>> serveur.init() # initialisation, indispensable
+>>> while 1: # le serveur ne s'arrête pas naturellement
+...     serveur.verifier_connexions()
+...     serveur.verifier_receptions()
+
+"""
 
 import sys
 import socket
@@ -222,8 +232,7 @@ class ConnexionServeur:
             client = self.get_client_depuis_socket(socket)
             client.recevoir()
             if client.message_est_complet():
-                print("Réception de {0} : {1}".format(client.id, \
-                        client.get_message()))
+                msg = client.get_message_decode()
 
         # On vérifie une dernière fois que tous les clients sont bien
         # connectés

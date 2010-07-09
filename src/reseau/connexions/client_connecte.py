@@ -52,6 +52,48 @@ class ClientConnecte:
         return "Client {0} ({1}:{2}, {3})".format( \
             self.id, self.adresse_ip, self.port, self.socket.fileno())
 
+    def nettoyer(self, message):
+        """Cette méthode se charge de nettoyer le message passé en paramètre.
+        Elle retourne le message nettoyé.
+
+        Les nettoyages effectués sont :
+        -   compatibilité telnet Windows : on retire les caractères
+            d'effacement et les caractères derrière ce signe
+        -   compatibilité tintin++ : on supprime les caractères préfixant
+            un accent, sans accent derrière
+
+        """
+        # Compatibilité telnet
+        car_eff = b"\x08"
+        while message.count(car_eff)>0:
+            pos = message.find(car_eff)
+            if pos>0:
+                message = message[:pos-1] + message[pos+1:]
+            else:
+                message = message[pos+1:]
+
+        # Compatibilité Tintin++
+        car_eff = 195
+        n_message = b""
+        for i,car in enumerate(message):
+            if not (car == car_eff and i+1<len(message) and \
+                    bytes([message[i+1]]).isalpha()):
+                n_message += bytes([car])
+
+
+        message = n_message
+        return message
+
+    def decoder(self, message):
+        """Test de décodage.
+
+        Si le décodage échoue, une exception sera levée.
+        """
+        try:
+            return message.decode("utf-8")
+        except UnicodeDecodeError:
+            return message.decode("latin-1")
+
     def envoyer(self, message):
         """Envoie d'un message au socket.
         Le message est déjà encodé. Ce n'set plus un type str.
@@ -95,7 +137,16 @@ class ClientConnecte:
             message = message.replace(b"\n\n", b"\n")
         messages = message.split(b"\n")
         self.message = b"\n".join(messages[1:])
-        return messages[0] # on retourne le premier message
+        message = messages[0] # on retourne le premier message
+        message = self.nettoyer(message)
+        return message
+
+    def get_message_decode(self):
+        """Cette méthode travaille avec get_message et retourne le message
+        décodé, si possible.
+
+        """
+        return self.decoder(self.get_message())
 
     def deconnecter(self, message):
         self.socket.close()
