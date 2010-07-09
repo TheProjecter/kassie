@@ -105,10 +105,17 @@ class ConnexionServeur:
         """
         try:
             print(self, socket)
-            return self.filenos[socket.fileno()]
+            return self.clients[self.filenos[socket.fileno()]]
         except KeyError:
             raise KeyError("le socket n. {0} n'est pas un socket client" \
                     .format(socket.fileno()))
+
+    def get_clients_sockets(self):
+        """Retourne la liste des sockets des différents clients connectés."""
+        sockets = []
+        for client in self.clients.values():
+            sockets.append(client.socket)
+        return sockets
 
     def ajouter_client(self, socket, infos):
         """Cette méthode se charge d'ajouter un client connecté au
@@ -169,3 +176,27 @@ class ConnexionServeur:
                     # On créée notre client
                     client = self.ajouter_client(socket, infos)
                     print("Connexion du client {0}.".format(client))
+
+    def verifier_receptions(self):
+        """Cette méthode vérifie si des clients ont envoyé des messages
+        à réceptionner. Elle se base sur select.select pour cela.
+
+        """
+        # On attend avec select.select qu'un message soit réceptionné
+        # Si aucun message n'est à réceptionner au bout du temps indiqué
+        # dans self.attente_reception, select.select s'arrête
+        # en levant une exception select.error
+        try:
+            receptions, none, none = select.select(
+                self.get_clients_sockets(), [], [], self.attente_reception)
+        except select.error:
+            pass
+
+        # On parcourt la boucle des clients possédant un message à réceptionner
+        for socket in receptions:
+            # On récupère le client correspondant
+            client = self.get_client_depuis_socket(socket)
+            client.recevoir()
+            if client.message_est_complet():
+                print("Réception de {0} : {1}".format(client.id, \
+                        client.get_message()))

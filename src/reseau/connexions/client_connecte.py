@@ -45,7 +45,7 @@ class ClientConnecte:
         # Message en cours (il contient la chaîne que le client
         # est en train d'écrire, dans le cas d'un client qui envoie
         # au fur et à mesure les caractères entrés)
-        self.message = ""
+        self.message = b""
     
     def __str__(self):
         """On affiche l'ID du client, son ip et son port entrant"""
@@ -57,6 +57,45 @@ class ClientConnecte:
         Le message est déjà encodé. Ce n'set plus un type str.
         """
         self.socket.send(message)
+
+    def recevoir(self):
+        """Cette méthode se charge de réceptionner le message en attente.
+
+        On appelle la méthode recv du socket.
+
+        """
+        self.message += self.socket.recv(1024)
+
+    def message_est_complet(self):
+        """Retourne True si le message se termine par un caractère de fin de
+        ligne, False sinon.
+
+        """
+        fin_lignes = [b"\r", b"\n"]
+        est_complet = False
+        for code in fin_lignes:
+            if not est_complet:
+                est_complet = self.message.endswith(code)
+        return est_complet
+
+    def get_message(self):
+        """Cette méthode retourne le message complet.
+        Elle met à jour self.message en supprimant le message retourné.
+        Si plusieurs messages complets sont contenus, on ne retourne que le
+        premier.
+
+        """
+        if self.message == b'': # on déconnecte
+            self.deconnecter("Perte de la connexion du client {0}".format( \
+                    self.id))
+        else:
+            message = self.message
+            message = message.replace(b"\r", b"\n")
+            while message.count(b"\n\n")>0:
+                message = message.replace(b"\n\n", b"\n")
+            messages = message.split(b"\n")
+            self.message = b"\n".join(messages[1:])
+            return messages[0] # on retourne le premier message
 
     def deconnecte(self, message):
         self.socket.close()
