@@ -1,0 +1,9 @@
+Ce dossier contient des exemples d'implémentation de Kassie dans ses
+différentes versions. Des exemples seront ajoutés et retirés en fonction de l'avancement.
+
+Chaque exemple contient une explication sur son utilité.
+
+NOTE IMPORTANTE : chaque exemple doit, pour être exécuté, être déplacé
+dans le dossier src. En effet, ils font directement références à
+l'architecture relative de Kassie. Une autre solution est d'étendre le
+PYTHONPATH, mais ce ne sont que des exemples au fond.

@@ -46,6 +46,9 @@ class ClientConnecte:
         # est en train d'écrire, dans le cas d'un client qui envoie
         # au fur et à mesure les caractères entrés)
         self.message = b""
+
+        # retour : il contient le message retourné en cas de déconnexion
+        self.retour = ""
     
     def __str__(self):
         """On affiche l'ID du client, son ip et son port entrant"""
@@ -149,6 +152,12 @@ class ClientConnecte:
         return self.decoder(self.get_message())
 
     def deconnecter(self, message):
+        """Méthode appelée pour déconnecter un client.
+        - on ferme la connexion du socket
+        - on met à jour le booléen self.connecte
+        - on stock le message retourné dans self.retour
+
+        """
         self.socket.close()
         self.connecte = False
-        print("Déconnexion du client {0}: {1}.".format(self.id, message))
+        self.retour = message

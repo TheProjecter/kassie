@@ -6,9 +6,20 @@ Pour créer un serveur opérationnel, quelques instructions suffisent :
 
 >>> serveur = ConnexionServeur(4000) # test sur le port 4000
 >>> serveur.init() # initialisation, indispensable
->>> while 1: # le serveur ne s'arrête pas naturellement
+>>> while True: # le serveur ne s'arrête pas naturellement
 ...     serveur.verifier_connexions()
 ...     serveur.verifier_receptions()
+
+Note importante: une fonction de Callback est utilisée pour définir
+des instructions à effectuer dans les cas suivants :
+- un client se connecte
+- un client se déconnecte
+- un client envoie un message réceptionné par le serveur
+
+Ces fonctions, ainsi que leurs paramètres, sont à préciser avant
+l'initialisation et le lancement du serveur.
+
+Par défaut, ces fonctions de callback vallent None.
 
 """
 
@@ -17,6 +28,7 @@ import socket
 import select
 
 from reseau.connexions.client_connecte import ClientConnecte
+from bases.fonction import *
 
 class ConnexionServeur:
     """Cette classe représente le socket en écoute sur le port choisit
@@ -25,8 +37,8 @@ class ConnexionServeur:
     Sur une architecture réseau simple, elle n'a besoin d'être instanciée
     qu'une unique fois.
     
-    Après son instanciation, on doit appeler dans une boucle la méthode ''
-    chargée de vérifier les connexions en attente, d'accepter les clients
+    Après son instanciation, on doit appeler dans une boucle les méthodes
+    chargées de vérifier les connexions en attente, d'accepter les clients
     éventuels puis d'interroger chaque client pour savoir si des messages
     sont à récupérer.
     
@@ -82,6 +94,14 @@ class ConnexionServeur:
         # Socket serveur
         self.socket  = None
 
+        # Fonctions de callback
+        self.callbacks = {
+            # declencheur : (fonction, parametres)
+            "connexion":Fonction(None),
+            "deconnexion":Fonction(None),
+            "reception":Fonction(None),
+        }
+
     def init(self):
         """Cette méthode doit être appelée après l'appel au constructeur.
         Elle se charge d'initialiser le socket serveur et, en somme,
@@ -131,6 +151,8 @@ class ConnexionServeur:
         dictionnaire des clients. On en profite pour remplir le dictionnaire
         faisant la correspondance entre ID client et fileno() de socket.
 
+        Cette méthode fait appel à la fonction de callback connexion.
+
         On retourne le client créé et ajouté.
 
         """
@@ -140,6 +162,10 @@ class ConnexionServeur:
 
         # On renseigne le dictionnaire {socket.fileno():id_client}
         self.filenos[socket.fileno()] = client.id
+
+        # On appelle la fonction de callback "connexion"
+        self.callbacks["connexion"].exec(client)
+
         return client
 
     def retirer_client(self, client):
@@ -148,9 +174,17 @@ class ConnexionServeur:
 
         On doit mettre à jour self.clients mais aussi self.filenos.
 
+        Avant tout cependant, on appelle la fonction de callback "deconnexion".
+
         """
+        # On appelle la fonction de callback "deconnexion"
+        self.callbacks["deconnexion"].exec(client)
+
+        # On supprime le client des clients connectés
         if client.id in self.clients.keys():
             del self.clients[client.id]
+
+        # On supprime le socket des filenos enregistrés
         if client.socket.fileno() in self.filenos.keys():
             del self.filenos[client.socket.fileno()]
 
@@ -207,7 +241,6 @@ class ConnexionServeur:
                 else:
                     # On créée notre client
                     client = self.ajouter_client(socket, infos)
-                    print("Connexion du client {0}.".format(client))
 
     def verifier_receptions(self):
         """Cette méthode vérifie si des clients ont envoyé des messages
@@ -232,7 +265,8 @@ class ConnexionServeur:
             client = self.get_client_depuis_socket(socket)
             client.recevoir()
             if client.message_est_complet():
-                msg = client.get_message_decode()
+                # On appelle la fonction de callback "reception"
+                self.callbacks["reception"].exec(client)
 
         # On vérifie une dernière fois que tous les clients sont bien
         # connectés
