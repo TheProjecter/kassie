@@ -11,6 +11,11 @@ réception d'un message. Consultez le code pour plus d'informations.
 
 """
 
+import os
+import sys
+
+sys.path.append(os.getcwd() + "/../src")
+
 from reseau.connexions.serveur import *
 
 fin_ligne = "\r\n"
