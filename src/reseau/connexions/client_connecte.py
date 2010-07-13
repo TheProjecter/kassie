@@ -87,15 +87,23 @@ class ClientConnecte:
         message = n_message
         return message
 
-    def decoder(self, message):
+    def decoder(self, message, decodage=0):
         """Test de décodage.
+        Fonction récursive : tant qu'on peut décoder, on essaye.
 
         Si le décodage échoue, une exception sera levée.
         """
+        encodages = ['Utf-8', 'Latin-1']
         try:
-            return message.decode("utf-8")
-        except UnicodeDecodeError:
-            return message.decode("latin-1")
+            actuel = encodages[decodage]
+        except IndexError:
+            raise UnicodeError("aucun encodage n'a pu etre utilise " \
+                    "sur cette chaine")
+        try:
+            n_message = message.decode(actuel)
+            return n_message
+        except UnicodeError:
+            return self.decoder(message, decodage+1)
 
     def envoyer(self, message):
         """Envoie d'un message au socket.
