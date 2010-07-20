@@ -4,7 +4,7 @@
 d'évènements serveur (connexion d'un client, déconnexion, réception
 d'un message...)
 
-Elle prennent toutes le préfixe cb_ (callback)
+Elles prennent toutes le préfixe cb_ (callback)
 
 """
 

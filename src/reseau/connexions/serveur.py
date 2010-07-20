@@ -264,7 +264,10 @@ class ConnexionServeur:
             # On récupère le client correspondant
             client = self.get_client_depuis_socket(socket)
             client.recevoir()
-            if client.message_est_complet():
+            # On part du principe que le message est récupéré au fur et à
+            # mesure dans les fonctions de callback. Sans quoi, cette
+            # instruction provoque une boucle infinie
+            while client.message_est_complet():
                 # On appelle la fonction de callback "reception"
                 self.callbacks["reception"].exec(client)
 

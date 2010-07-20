@@ -115,9 +115,13 @@ class ClientConnecte:
         """Cette méthode se charge de réceptionner le message en attente.
 
         On appelle la méthode recv du socket.
+    En cas d'exception socket.error, on déconnecte le client.
 
         """
-        message = self.socket.recv(1024)
+        try:
+            message = self.socket.recv(1024)
+        except socket.error:
+            self.deconnecter("perte de la connexion")
         if message == b"":
             self.deconnecter("perte de la connexion")
         else:
