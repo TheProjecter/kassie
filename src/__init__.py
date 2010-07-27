@@ -5,6 +5,7 @@ une hiérarchie des packages présents.
 
 Packages :
 - abstraits : des classes abstraites, hérités dans le corps et les modules
+- bases : des classes de base, utiles au corps
 - primaires : package contenant les modules primaires sous la forme eux-même de
               packages
 - reseau : package consacré au réseau, architecture de haut niveau pour

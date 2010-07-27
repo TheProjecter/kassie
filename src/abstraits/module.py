@@ -4,10 +4,16 @@
 
 # Statuts
 INSTANCIE = 0
+CONFIGURE = 1
+INITIALISE = 2
+DETRUIT = 3
 
 # Dictionnaire permettant de faire correspondre un statut à une chaîne
 statuts = {
     INSTANCIE:"instancié",
+    CONFIGURE:"configuré",
+    INITIALISE:"initialisé",
+    DETRUIT:"détruit",
 }
 
 class Module:
@@ -18,7 +24,7 @@ class Module:
     Elle reprend les trois méthodes d'un module, appelée dans l'ordre :
     -   config : configuration du module
     -   init : initialisation du module (ne pas confondre avec le constructeur)
-    -   destroy : destruction du module, appelée lors du déchargement
+    -   detruire : destruction du module, appelée lors du déchargement
     
     L'initialisation est la phase la plus importante. Elle se charge,
     en fonction de la configuration définie et instanciée dans config,
@@ -26,10 +32,10 @@ class Module:
     place pendant l'appel au module, elles doivent être créées dans cette
     méthode.
 
-    La méthode destroy doit éviter de se charger de l'enregistrement des
+    La méthode detruire doit éviter de se charger de l'enregistrement des
     données. Il est préférable que cette opération se fasse en temps réel,
     quand cela est nécessaire (c'est-à-dire quand un objet a été modifié).
-    En cas de crash, il se peut très bien que la méthode destroy ne soit pas
+    En cas de crash, il se peut très bien que la méthode detruire ne soit pas
     appelée, le garder à l'esprit.
     
     On passe en paramètre du module l'importeur. Cela permet, pour un module,
@@ -55,11 +61,20 @@ class Module:
         """Retourne le nom, le type et le statut du module."""
         return "{0} (type {1}), {2}".format(self.nom, self.type, \
                 statuts[self.statut])
+
     def config(self):
         """Méthode de configuration.
         On charge ici la configuration.
+        
+        Note: cette méthode est également utilisée pour recharger la
+        configuration. Si on doit faire certaines actions dans le cadre
+        de la première configuration, se baser sur le statut qui doit être
+        INSTANCIE. Si il est INITIALISE, cela signifie que le module
+        a été configuré une fois au moins.
+
         """
-        raise NotImplementedError
+        if self.statut == INSTANCIE:
+            self.statut = CONFIGURE
 
     def init(self):
         """Méthode d'initialisation.
@@ -68,12 +83,12 @@ class Module:
         cette méthode doit s'interrompre dans la méthode destroy.
         
         """
-        raise NotImplementedError
+        self.statut = INITIALISE
 
-    def destroy(self):
+    def detruire(self):
         """Méthode d'arrêt ou de déchargement du module.
         On l'appelle avant l'arrêt du MUD (en cas de reboot total) ou
         si l'on souhaite décharger ou recharger complètement un module.
         """
-        raise NotImplementedError
+        self.statut = DETRUIT
 
