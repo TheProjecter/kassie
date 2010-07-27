@@ -38,6 +38,11 @@ class Anaconf(Module):
         global rep_config
         if "chemin-configuration" in self.parser_cmd.keys():
             rep_config = self.parser_cmd["chemin-configuration"]
+        
+        # On construit le répertoire si il n'existe pas
+        if not os.path.exists(rep_config):
+            os.makedirs(rep_config)
+
 
     def charger_config(self, chemin, defauts):
         """Cette méthode permet de charger une configuration contenue dans
@@ -49,6 +54,9 @@ class Anaconf(Module):
         """
         global rep_config
         chemin = rep_config + os.sep + chemin
-        print(chemin)
+        # On construit le répertoire si il n'existe pas
+        rep = os.path.split(chemin)[0]
+        if not os.path.exists(rep):
+            os.makedirs(rep)
         return Analyseur(chemin, defauts)
 
