@@ -46,6 +46,9 @@ class Importeur:
         """Constructeur de l'importeur. Il vérifie surtout
         qu'un seul est créé.
         
+        Il prend en paramètre le parser de commande qu'il doit transmettre
+        à chaque module.
+        
         """
         Importeur.nb_importeurs += 1
         if Importeur.nb_importeurs>1:
@@ -81,7 +84,7 @@ class Importeur:
                         nom_package.capitalize())
                 setattr(self, nom_package, module)
 
-    def tout_instancier(self):
+    def tout_instancier(self, parser_cmd):
         """Cette méthode permet d'instancier les modules chargés auparavant.
         On se base sur le type du module (classe ou objet)
         pour le créer ou non.
@@ -96,7 +99,7 @@ class Importeur:
         """
         for nom_module,module in self.__dict__.items():
             if type(module) is type: # on doit l'instancier
-                setattr(self, nom_module, module(self))
+                setattr(self, nom_module, module(self, parser_cmd))
 
     def tout_configurer(self):
         """Méthode permettant de configurer tous les modules qui en ont besoin.
@@ -141,7 +144,7 @@ class Importeur:
         """
         return nom in self.__dict__.keys()
 
-    def charger_module(self, type, nom):
+    def charger_module(self, parser_cmd, type, nom):
         """Méthode permettant de charger un module en fonction de son type et de
         son nom.
         
@@ -165,7 +168,7 @@ class Importeur:
             package = __import__(rep + "." + nom)
             module = getattr(getattr(package, nom), \
                     nom.capitalize())
-            setattr(self, nom, module(self))
+            setattr(self, nom, module(self, parser_cmd))
 
     def decharger_module(self, type, nom):
         """Méthode permettant de décharger un module.
@@ -196,13 +199,13 @@ class Importeur:
         else:
             print("{0} n'est pas dans les attributs de l'importeur".format(nom))
 
-    def recharger_module(self, type, nom):
+    def recharger_module(self, parser_cmd, type, nom):
         """Cette méthode permet de recharger un module. Elle passe par :
         -   decharger_module
         -   charger_module
         
         """
-        self.decharger_module(type, nom)
+        self.decharger_module(parser_cmd, type, nom)
         self.charger_module(type, nom)
 
     def config_module(self, nom):

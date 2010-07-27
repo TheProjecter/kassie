@@ -9,6 +9,7 @@ Vous pouvez le renommer en fonction du nom choisi de votre projet.
 from reseau.connexions.serveur import *
 from reseau.fonctions.callbacks import *
 from bases.importeur import Importeur
+from bases.parser_cmd import ParserCMD
 
 # Changez ici le port par défaut
 # Le port par défaut peut être modifié par des options de la ligne
@@ -17,6 +18,21 @@ from bases.importeur import Importeur
 # Utiliser un port différent précisé dans la ligne de commande a surtout
 # été mis en place pour créer de multiples essions de test du MUD
 port = 4000
+
+# On créée un analyseur de la ligne de commande
+parser_cmd = ParserCMD()
+parser_cmd.interpreter()
+
+# Si le port est spécifié dans la ligne de commande, on le change
+if "port" in parser_cmd.keys():
+    port = parser_cmd["port"]
+
+# On créée l'importeur et on lance le processus d'instanciation des modules.
+importeur = Importeur()
+importeur.tout_charger()
+importeur.tout_instancier(parser_cmd)
+importeur.tout_configurer()
+importeur.tout_initialiser()
 
 # Vous pouvez changer les paramètres du serveur, telles que spécifiées dans le
 # constructeur de ServeurConnexion (voir reseau/connexions/serveur.py)

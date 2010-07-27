@@ -42,9 +42,12 @@ class Module:
     d'avoir accès à tous les autres modules chargés. Mais de ce fait,
     il est fortement déconseillé de faire référence à d'autres modules lors
     de la construction du module (méthode __init__).
+    
+    De même, on passe le parser de commande pour avoir la liste des options
+    précisées par l'utilisateur.
 
     """
-    def __init__(self, importeur, nom, type="inconnu"):
+    def __init__(self, importeur, parser_cmd, nom, type="inconnu"):
         """Constructeur d'un module.
         Par défaut, on lui attribue surtout un nom IDENTIFIANT, sans accents
         ni espaces, qui sera le nom du package même.
@@ -53,6 +56,7 @@ class Module:
 
         """
         self.importeur = importeur
+        self.parser_cmd = parser_cmd
         self.nom = nom
         self.type = type
         self.statut = INSTANCIE
