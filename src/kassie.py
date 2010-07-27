@@ -8,6 +8,7 @@ Vous pouvez le renommer en fonction du nom choisi de votre projet.
 
 from reseau.connexions.serveur import *
 from reseau.fonctions.callbacks import *
+from bases.importeur import Importeur
 
 # Changez ici le port par défaut
 # Le port par défaut peut être modifié par des options de la ligne
