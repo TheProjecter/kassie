@@ -34,12 +34,16 @@ importeur.tout_instancier(parser_cmd)
 importeur.tout_configurer()
 importeur.tout_initialiser()
 
+# On se créée un logger
+log = importeur.log.creer_logger("", "sup", "kassie.log")
+
 # Vous pouvez changer les paramètres du serveur, telles que spécifiées dans le
 # constructeur de ServeurConnexion (voir reseau/connexions/serveur.py)
 # Par défaut, on précise simplement son port d'écoute.
 
 serveur = ConnexionServeur(port)
 serveur.init() # Initialisation, le socket serveur se met en écoute
+log.info("Le serveur est à présent en écoute sur le port {0}".format(port))
 
 # Configuration des fonctions de callback
 # Note: si vous souhaitez modifier le comportement en cas de connexion
@@ -49,15 +53,15 @@ serveur.init() # Initialisation, le socket serveur se met en écoute
 
 # Fonction de callback appelée lors de la connexion d'un client
 serveur.callbacks["connexion"].fonction = cb_connexion
-serveur.callbacks["connexion"].parametres = (serveur, )
+serveur.callbacks["connexion"].parametres = (serveur, log)
 
 # Fonction de callback appelée lors de la déconnexion d'un client
 serveur.callbacks["deconnexion"].fonction = cb_deconnexion
-serveur.callbacks["deconnexion"].parametres = (serveur, )
+serveur.callbacks["deconnexion"].parametres = (serveur, log)
 
 # Fonction de callback appelée lors de la réception d'un message d'un client
 serveur.callbacks["reception"].fonction = cb_reception
-serveur.callbacks["reception"].parametres = (serveur, )
+serveur.callbacks["reception"].parametres = (serveur, log)
 
 # Lancement de la boucle synchro
 # Note: tout se déroule ici, dans une boucle temps réelle qui se répète

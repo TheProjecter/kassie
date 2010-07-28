@@ -25,16 +25,20 @@ class Log(Module):
     informations (c'est-à-dire la majorité sinon la totalité)
     devra passer par ce module.
     
+    On conserve une trace des loggers créés.
+    
     NOTE IMPORTANTE: ce module ne pourra pas travailler avant d'être
     initialisé. Si des messages de log doivent être envoyés avant
     l'initialisation, ils seront mis dans une fil d'attente et enregistrés
     lors de l'initialisation.
     
+    Voir primaires/log/logger.py
+    
     """
     def __init__(self, importeur, parser_cmd):
         """Constructeur du module"""
         Module.__init__(self, importeur, parser_cmd, "log", "primaire")
-        self.fil_attente = []
+        self.loggers = {} # {nom_logger:logger}
 
     def config(self):
         """Méthode de configuration. On se base sur
@@ -49,6 +53,26 @@ class Log(Module):
         # On construit le répertoire si il n'existe pas
         if not os.path.exists(rep_logs):
             os.makedirs(rep_logs)
+        
+        # On met à jour le rep_base de chaque logger
+        for logger in self.loggers.values():
+            logger.rep_base = rep_logs
+            logger.verif_rep()
+
+        Module.config(self)
+
+    def init(self):
+        """Redéfinition de l'initialisation.
+        On va passer le statut de tous les loggers pour qu'ils puissent
+        écrire en temps réel leur message. On va aussi leur demander
+        d'enregistrer toute leur fil d'attente.
+        
+        """
+        for logger in self.loggers.values():
+            logger.en_fil = False
+            logger.enregistrer_fil_attente()
+        
+        Module.init(self)
 
     def creer_logger(self, sous_rep, nom_logger, nom_fichier=""):
         """Retourne un nouveau logger.
@@ -62,5 +86,9 @@ class Log(Module):
         if nom_fichier=="":
             nom_fichier = "{0}.log".format(nom_logger)
 
-        rep = rep_logs + os.sep + sous_rep
-        return Logger(rep, nom_fichier, nom_logger)
+        logger = Logger(rep_logs, sous_rep, nom_fichier, nom_logger)
+        if self.statut == INITIALISE:
+            logger.en_fil = False
+            logger.verif_rep()
+        self.loggers[nom_logger] = logger
+        return logger

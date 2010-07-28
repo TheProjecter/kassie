@@ -10,23 +10,23 @@ Elles prennent toutes le préfixe cb_ (callback)
 
 fin_ligne = "\r\n"
 
-def cb_connexion(serveur, client):
+def cb_connexion(serveur, logger, client):
     """Que se passe-t-il quand client se connecte ?"""
-    print("Connexion du client {0}".format(client))
+    logger.info("Connexion du client {0}".format(client))
     for c in serveur.clients.values():
         if c is not client:
             c.envoyer("$$ {0} se connecte au serveur{1}".format( \
                     client, fin_ligne).encode())
 
-def cb_deconnexion(serveur, client):
+def cb_deconnexion(serveur, logger, client):
     """Que se passe-t-il quand client se déconnecte ?"""
-    print("Déconnexion du client {0} : {1}".format(client, client.retour))
+    logger.info("Déconnexion du client {0} : {1}".format(client, client.retour))
     for c in serveur.clients.values():
         if c is not client:
             c.envoyer("** {0} se déconnecte du serveur{1}".format( \
                     client, fin_ligne).encode())
 
-def cb_reception(serveur, client):
+def cb_reception(serveur, logger, client):
     """Que se passe-t-il quand client envoie un message au serveur ?"""
     msg = client.get_message_decode()
     #print("J'ai réceptionné {0}".format(msg))

@@ -123,10 +123,6 @@ class ConnexionServeur:
 
         # On met en écoute le socket serveur
         self.socket.listen(self.nb_clients_attente)
-        
-        # On informe le peuple
-        print("Le serveur est à présent en écoute sur le port {0}".format( \
-                self.port))
 
     def get_client_depuis_socket(self, socket):
         """Cette méthode retourne le client connecté, en fonction du
