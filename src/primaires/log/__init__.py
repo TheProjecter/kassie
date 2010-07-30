@@ -26,7 +26,7 @@ class Log(Module):
     devra passer par ce module.
     
     On conserve une trace des loggers créés.
-    
+
     NOTE IMPORTANTE: ce module ne pourra pas travailler avant d'être
     initialisé. Si des messages de log doivent être envoyés avant
     l'initialisation, ils seront mis dans une fil d'attente et enregistrés
@@ -70,6 +70,7 @@ class Log(Module):
         """
         for logger in self.loggers.values():
             logger.en_fil = False
+            logger.verif_rep()
             logger.enregistrer_fil_attente()
         
         Module.init(self)
@@ -80,7 +81,7 @@ class Log(Module):
         du logger .log.
         On se base dans tous les cas sur rep_base lié au sous_rep pour
         créer l'architecture d'enregistrement des logs.
-        
+
         """
         global rep_logs
         if nom_fichier=="":

@@ -42,7 +42,8 @@ class Anaconf(Module):
         # On construit le répertoire si il n'existe pas
         if not os.path.exists(rep_config):
             os.makedirs(rep_config)
-
+        
+        Module.config(self)
 
     def charger_config(self, chemin, defauts):
         """Cette méthode permet de charger une configuration contenue dans

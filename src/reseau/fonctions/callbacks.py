@@ -10,7 +10,7 @@ Elles prennent toutes le préfixe cb_ (callback)
 
 fin_ligne = "\r\n"
 
-def cb_connexion(serveur, logger, client):
+def cb_connexion(serveur, importeur, logger, client):
     """Que se passe-t-il quand client se connecte ?"""
     logger.info("Connexion du client {0}".format(client))
     for c in serveur.clients.values():
@@ -18,7 +18,7 @@ def cb_connexion(serveur, logger, client):
             c.envoyer("$$ {0} se connecte au serveur{1}".format( \
                     client, fin_ligne).encode())
 
-def cb_deconnexion(serveur, logger, client):
+def cb_deconnexion(serveur, importeur, logger, client):
     """Que se passe-t-il quand client se déconnecte ?"""
     logger.info("Déconnexion du client {0} : {1}".format(client, client.retour))
     for c in serveur.clients.values():
@@ -26,7 +26,7 @@ def cb_deconnexion(serveur, logger, client):
             c.envoyer("** {0} se déconnecte du serveur{1}".format( \
                     client, fin_ligne).encode())
 
-def cb_reception(serveur, logger, client):
+def cb_reception(serveur, importeur, logger, client):
     """Que se passe-t-il quand client envoie un message au serveur ?"""
     msg = client.get_message_decode()
     #print("J'ai réceptionné {0}".format(msg))

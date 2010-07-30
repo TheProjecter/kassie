@@ -9,7 +9,7 @@ class Message:
     """
     def __init__(self, niveau, message, formate):
         """Un message de log contient :
-        -   un niveau d'erreur (str)
+        -   un niveau d'erreur (int)
         -   un message informatif (str)
         -   le message formaté
         

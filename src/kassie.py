@@ -53,15 +53,15 @@ log.info("Le serveur est à présent en écoute sur le port {0}".format(port))
 
 # Fonction de callback appelée lors de la connexion d'un client
 serveur.callbacks["connexion"].fonction = cb_connexion
-serveur.callbacks["connexion"].parametres = (serveur, log)
+serveur.callbacks["connexion"].parametres = (serveur, importeur, log)
 
 # Fonction de callback appelée lors de la déconnexion d'un client
 serveur.callbacks["deconnexion"].fonction = cb_deconnexion
-serveur.callbacks["deconnexion"].parametres = (serveur, log)
+serveur.callbacks["deconnexion"].parametres = (serveur, importeur, log)
 
 # Fonction de callback appelée lors de la réception d'un message d'un client
 serveur.callbacks["reception"].fonction = cb_reception
-serveur.callbacks["reception"].parametres = (serveur, log)
+serveur.callbacks["reception"].parametres = (serveur, importeur, log)
 
 # Lancement de la boucle synchro
 # Note: tout se déroule ici, dans une boucle temps réelle qui se répète
