@@ -15,4 +15,7 @@ Règles d'inter-dépendance :
 Pour obtenir de l'aide sur un module en particulier, consulter le fichier
 __init__.py du package concerné.
 
+NOTE: les modules primaires et secondaires ne doivent pas porter de noms
+identiques.
+
 """

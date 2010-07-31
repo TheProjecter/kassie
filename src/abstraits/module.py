@@ -21,7 +21,7 @@ class Module:
     ou secondaire.
     
     Chacun des modules primaires ou secondaires devra hériter de cette classe.
-    Elle reprend les trois méthodes d'un module, appelée dans l'ordre :
+    Elle reprend les méthodes d'un module, appelée dans l'ordre :
     -   config : configuration du module
     -   init : initialisation du module (ne pas confondre avec le constructeur)
     -   detruire : destruction du module, appelée lors du déchargement
@@ -38,6 +38,10 @@ class Module:
     En cas de crash, il se peut très bien que la méthode detruire ne soit pas
     appelée, le garder à l'esprit.
     
+    D'autres méthodes génériques sont définies :
+    -   boucle : appelée à chaque tour de boucle synchro, elle permet
+        d'accomplir une certaine action le plus régulièrement possible
+
     On passe en paramètre du module l'importeur. Cela permet, pour un module,
     d'avoir accès à tous les autres modules chargés. Mais de ce fait,
     il est fortement déconseillé de faire référence à d'autres modules lors
@@ -95,4 +99,8 @@ class Module:
         si l'on souhaite décharger ou recharger complètement un module.
         """
         self.statut = DETRUIT
+    
+    def boucle(self):
+        """Méthode appelée à chaque tour de boucle synchro."""
+        pass
 

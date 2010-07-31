@@ -5,8 +5,9 @@
 class Fonction:
     """Cette classe définit une fonction possédant une liste
     de paramètres, que l'on peut ainsi appeler à tout moment.
+
     """
-    def __init__(self, fonction, *parametres):
+    def __init__(self, fonction, *args, **kwargs):
         """Créée  un objet Fonction gardant la fonction et les paramètres
         à appeler. Pour exécuter cette fonction, on utilise la méthode d'objet
         exec().
@@ -17,15 +18,18 @@ class Fonction:
 
         """
         self.fonction = fonction
-        self.parametres = parametres # sous la forme d'un tuple
+        self.args = args # sous la forme d'un tuple
+        self.kwargs = kwargs # sous la forme d'un dictionnaire
 
-    def exec(self, *params_sup):
+    def exec(self, *args_sup, **kwargs_sup):
         """Cette méthode permet d'exécuter la fonction contenue dans
         self.fonction en lui passant en paramètre :
-        - les paramètres contenus dans self.parametres
-        - les paramètres contenus dans params_sup
+        - les paramètres contenus dans self.args et self.kwargs
+        - les paramètres contenus dans args_sup et kwargs_sup
 
         """
         if self.fonction is not None:
-            parametres = self.parametres + params_sup
-            self.fonction(*parametres)
+            args = self.args + args_sup
+            self.kwargs.update(kwargs_sup)
+            kwargs = self.kwargs
+            self.fonction(*args, **kwargs)

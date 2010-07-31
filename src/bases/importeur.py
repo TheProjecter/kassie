@@ -133,6 +133,15 @@ class Importeur:
             if module.statut == INITIALISE:
                 module.detruire()
 
+    def boucle(self):
+        """Méthode appelée à chaque tour de boucle synchro.
+        Elle doit faire appel à la méthode boucle de chaque module primaire
+        ou secondaire.
+        
+        """
+        for module in self.__dict__.values():
+            module.boucle()
+
     def module_est_charge(self, nom):
         """Retourne True si le module est déjà chargé, False sinon.
         On n'a pas besoin du type du module, les modules primaires
