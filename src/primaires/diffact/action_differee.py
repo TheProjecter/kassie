@@ -28,24 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce package contient l'ensemble des modules primaires du projet.
+"""Ce fichier définit la classe ActionDifferee, détaillée plus bas."""
 
-Chaque module primaire possède son propre package.
+import time
 
-Les modules primaires ayant des relations d'inter-dépendance entre eux, un
-ordre d'instanciation est défini dans ce fichier. Tout ce qui n'est pas dans
-l'ordre d'instanciation sera instancié par la suite, après les modules définis.
+from bases.fonction import Fonction
 
-Règles d'interdépendance :
-- un module primaire peut faire appel aux autres modules primaires
-- un module primaire ne peut faire appel à un module secondaire, sauf
-  si il utilise des méthodes génériques aux modules servant à modifier
-  son état, ou à l'interprétation de commandes
+class ActionDifferee:
+    """Cette classe permet de déclarer des actions différées.
+    Ce sont des actions qui s'exécuteront plus tard. La méthode boucle du 
+    module primaire diffact se charge d'exécuter ces actions différées au temps
+    prévu. Une action différée contient :
+    -   un nom identifiant (str)
+    -   un temps d'échéance sous la forme d'un timestamp (float)
+    -   une fonction telle que décrite dans bases.fonction avec une liste
+        d'arguments
+    
+    """
+    def __init__(self, nom, tps, ref_fonc, *args, **kwargs):
+        """Constructeur de l'action différée."""
+        self.nom = nom
+        self.echeance = time.time() + tps
+        self.fonction = Fonction(ref_fonc, *args, **kwargs)
+    
+    def doit_exec(self):
+        """Return True si le temps d'échéance est passé, False sinon."""
+        return time.time() >= self.echeance
 
-Pour obtenir une aide sur chaque module primaire, consulter le fichier
-__init__.py du package concerné.
-
-NOTE: les modules primaires et secondaires ne doivent pas porter de noms
-identiques.
-
-"""
+    def exec(self):
+        """Exécution de la fonction. On redirige simplement vers
+        self.fonction.exec().
+        
+        """
+        self.fonction.exec()
