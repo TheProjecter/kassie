@@ -225,10 +225,9 @@ class Importeur:
                     .format(type))
 
         nom_complet = rep + "." + nom
-        if nom_complet in sys.modules.keys():
-            del sys.modules[nom_complet]
-        else:
-            print("{0} n'est pas dans sys.modules".format(nom_complet))
+        for cle in list(sys.modules.keys()):
+            if cle.startswith(nom_complet + "."):
+                del sys.modules[cle]
 
         if self.module_est_charge(nom):
             getattr(self, nom).detuire()
