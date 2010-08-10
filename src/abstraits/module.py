@@ -79,7 +79,7 @@ class Module:
     précisées par l'utilisateur.
 
     """
-    def __init__(self, importeur, parser_cmd, nom, type_m="inconnu"):
+    def __init__(self, importeur, parser_cmd, nom, m_type="inconnu"):
         """Constructeur d'un module.
         Par défaut, on lui attribue surtout un nom IDENTIFIANT, sans accents
         ni espaces, qui sera le nom du package même.
