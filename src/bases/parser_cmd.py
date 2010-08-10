@@ -86,7 +86,7 @@ class ParserCMD(dict):
             sys.exit(1)
         
         # Analyse itérative des options
-        for nom,val in opts:
+        for nom, val in opts:
             # On test successivement chaque nom
             # Préférer tester chaque option dans l'ordre alphabétique
             if nom in ["-c", "--chemin-configuration"]:

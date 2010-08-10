@@ -33,15 +33,15 @@ d'importation, initialisation, configuration, déroulement et arrêt
 des modules primaires et secondaires.
 
 On parcourt les sous-dossiers définis dans les variables :
-- REP_PRIMAIREs : répertoire des modules primaires
-- REP_SECONDAIREs : répertoire des modules secondaires
+- REP_PRIMAIRES : répertoire des modules primaires
+- REP_SECONDAIRES : répertoire des modules secondaires
 
 Il est possible de changer ces variables mais dans ce cas, une réorganisation
 du projet s'impose.
 
 Dans chaque module, on s'occupera de charger l'objet le représentant.
 Par exemple, le module anaconf se définit comme suit :
-*   un package anaconf contenu dans REP_PRIMAIREs
+*   un package anaconf contenu dans REP_PRIMAIRES
     *   un fichier __init__.py
         *   une classe Anaconf
 
@@ -57,8 +57,8 @@ import sys
 
 from abstraits.module import *
 
-REP_PRIMAIREs = "primaires"
-REP_SECONDAIREs = "secondaires"
+REP_PRIMAIRES = "primaires"
+REP_SECONDAIRES = "secondaires"
 
 class Importeur:
     """Classe chargée de créer un objet Importeur. Il contient sous la forme
@@ -98,16 +98,16 @@ class Importeur:
 
         """
         # On commence par parcourir les modules primaires
-        for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIREs):
+        for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIRES):
             if not nom_package.startswith("__"):
-                package = __import__(REP_PRIMAIREs + "." + nom_package)
+                package = __import__(REP_PRIMAIRES + "." + nom_package)
                 module = getattr(getattr(package, nom_package), \
                         nom_package.capitalize())
                 setattr(self, nom_package, module)
         # On fait de même avec les modules secondaires
-        for nom_package in os.listdir(os.getcwd() + "/" + REP_SECONDAIREs):
+        for nom_package in os.listdir(os.getcwd() + "/" + REP_SECONDAIRES):
             if not nom_package.startswith("__"):
-                package = __import__(REP_SECONDAIREs + "." + nom_package)
+                package = __import__(REP_SECONDAIRES + "." + nom_package)
                 module = getattr(getattr(package, nom_package), \
                         nom_package.capitalize())
                 setattr(self, nom_package, module)
@@ -192,9 +192,9 @@ class Importeur:
         
         """
         if type == "primaire":
-            rep = REP_PRIMAIREs
+            rep = REP_PRIMAIRES
         elif type == "secondaire":
-            rep = REP_SECONDAIREs
+            rep = REP_SECONDAIRES
         else:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
                     .format(type))
@@ -217,9 +217,9 @@ class Importeur:
 
         """
         if type == "primaire":
-            rep = REP_PRIMAIREs
+            rep = REP_PRIMAIRES
         elif type == "secondaire":
-            rep = REP_SECONDAIREs
+            rep = REP_SECONDAIRES
         else:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
                     .format(type))
