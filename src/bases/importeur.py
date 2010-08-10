@@ -33,22 +33,22 @@ d'importation, initialisation, configuration, déroulement et arrêt
 des modules primaires et secondaires.
 
 On parcourt les sous-dossiers définis dans les variables :
-- rep_primaires : répertoire des modules primaires
-- rep_secondaires : répertoire des modules secondaires
+- REP_PRIMAIREs : répertoire des modules primaires
+- REP_SECONDAIREs : répertoire des modules secondaires
 
 Il est possible de changer ces variables mais dans ce cas, une réorganisation
 du projet s'impose.
 
 Dans chaque module, on s'occupera de charger l'objet le représentant.
 Par exemple, le module anaconf se définit comme suit :
-*   un package anaconf contenu dans rep_primaires
+*   un package anaconf contenu dans REP_PRIMAIREs
     *   un fichier __init__.py
         *   une classe Anaconf
 
 On créée un objet chargé de représenter le module. C'est cet objet qui
-possède les méthodes génériques chargées d'initialiser, configurer, lancer et
-arrêter un module. Les autres fichiers du module sont une boîte noir inconnu
-pour l'importeur.
+possède les méthodes génériques chargées d'initialiser, configurer, lancer
+et arrêter un module. Les autres fichiers du module sont une boîte noir
+inconnu pour l'importeur.
 
 """
 
@@ -57,8 +57,8 @@ import sys
 
 from abstraits.module import *
 
-rep_primaires = "primaires"
-rep_secondaires = "secondaires"
+REP_PRIMAIREs = "primaires"
+REP_SECONDAIREs = "secondaires"
 
 class Importeur:
     """Classe chargée de créer un objet Importeur. Il contient sous la forme
@@ -79,7 +79,7 @@ class Importeur:
         
         """
         Importeur.nb_importeurs += 1
-        if Importeur.nb_importeurs>1:
+        if Importeur.nb_importeurs > 1:
             raise RuntimeError("{0} importeurs ont été créés".format( \
                 Importeur.nb_importeurs))
 
@@ -98,16 +98,16 @@ class Importeur:
 
         """
         # On commence par parcourir les modules primaires
-        for nom_package in os.listdir(os.getcwd() + "/" + rep_primaires):
+        for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIREs):
             if not nom_package.startswith("__"):
-                package = __import__(rep_primaires + "." + nom_package)
+                package = __import__(REP_PRIMAIREs + "." + nom_package)
                 module = getattr(getattr(package, nom_package), \
                         nom_package.capitalize())
                 setattr(self, nom_package, module)
         # On fait de même avec les modules secondaires
-        for nom_package in os.listdir(os.getcwd() + "/" + rep_secondaires):
+        for nom_package in os.listdir(os.getcwd() + "/" + REP_SECONDAIREs):
             if not nom_package.startswith("__"):
-                package = __import__(rep_secondaires + "." + nom_package)
+                package = __import__(REP_SECONDAIREs + "." + nom_package)
                 module = getattr(getattr(package, nom_package), \
                         nom_package.capitalize())
                 setattr(self, nom_package, module)
@@ -125,7 +125,7 @@ class Importeur:
         besoin pour interragir entre eux.
 
         """
-        for nom_module,module in self.__dict__.items():
+        for nom_module, module in self.__dict__.items():
             if type(module) is type: # on doit l'instancier
                 setattr(self, nom_module, module(self, parser_cmd))
 
@@ -192,9 +192,9 @@ class Importeur:
         
         """
         if type == "primaire":
-            rep = rep_primaires
+            rep = REP_PRIMAIREs
         elif type == "secondaire":
-            rep = rep_secondaires
+            rep = REP_SECONDAIREs
         else:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
                     .format(type))
@@ -217,9 +217,9 @@ class Importeur:
 
         """
         if type == "primaire":
-            rep = rep_primaires
+            rep = REP_PRIMAIREs
         elif type == "secondaire":
-            rep = rep_secondaires
+            rep = REP_SECONDAIREs
         else:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
                     .format(type))
