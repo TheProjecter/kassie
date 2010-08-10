@@ -192,7 +192,7 @@ class ConnexionServeur:
         self.filenos[socket.fileno()] = client.id
 
         # On appelle la fonction de callback "connexion"
-        self.callbacks["connexion"].exec(client)
+        self.callbacks["connexion"].executer(client)
 
         return client
 
@@ -206,7 +206,7 @@ class ConnexionServeur:
 
         """
         # On appelle la fonction de callback "deconnexion"
-        self.callbacks["deconnexion"].exec(client)
+        self.callbacks["deconnexion"].executer(client)
 
         # On supprime le client des clients connectés
         if client.id in self.clients.keys():
@@ -297,7 +297,7 @@ class ConnexionServeur:
             # instruction provoque une boucle infinie
             while client.message_est_complet():
                 # On appelle la fonction de callback "reception"
-                self.callbacks["reception"].exec(client)
+                self.callbacks["reception"].executer(client)
 
         # On vérifie une dernière fois que tous les clients sont bien
         # connectés

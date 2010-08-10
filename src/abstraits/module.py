@@ -37,7 +37,7 @@ INITIALISE = 2
 DETRUIT = 3
 
 # Dictionnaire permettant de faire correspondre un statut à une chaîne
-statuts = {
+STATUTS = {
     INSTANCIE:"instancié",
     CONFIGURE:"configuré",
     INITIALISE:"initialisé",
@@ -79,7 +79,7 @@ class Module:
     précisées par l'utilisateur.
 
     """
-    def __init__(self, importeur, parser_cmd, nom, type="inconnu"):
+    def __init__(self, importeur, parser_cmd, nom, type_m="inconnu"):
         """Constructeur d'un module.
         Par défaut, on lui attribue surtout un nom IDENTIFIANT, sans accents
         ni espaces, qui sera le nom du package même.
@@ -90,13 +90,13 @@ class Module:
         self.importeur = importeur
         self.parser_cmd = parser_cmd
         self.nom = nom
-        self.type = type
+        self.type = m_type
         self.statut = INSTANCIE
 
     def __str__(self):
         """Retourne le nom, le type et le statut du module."""
         return "{0} (type {1}), {2}".format(self.nom, self.type, \
-                statuts[self.statut])
+                STATUTS[self.statut])
 
     def config(self):
         """Méthode de configuration.

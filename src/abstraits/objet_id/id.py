@@ -42,10 +42,10 @@ class ID:
     -   d'un identifiant (int)
     
     """
-    def __init__(self, groupe, id):
+    def __init__(self, groupe, n_id):
         """Constructeur de la classe ID."""
         self.groupe = groupe
-        self.id = id
+        self.id = n_id
     
     def __repr__(self):
         """On affiche l'ID ainsi : groupe:id"""

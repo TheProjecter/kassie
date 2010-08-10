@@ -45,10 +45,10 @@ Par exemple, le module anaconf se définit comme suit :
     *   un fichier __init__.py
         *   une classe Anaconf
 
-On créée un objet chargé de représenter le module. C'est cet objet qui possède
-les méthodes génériques chargées d'initialiser, configurer, lancer et arrêter
-un module. Les autres fichiers du module sont une boîte noir inconnu pour
-l'importeur.
+On créée un objet chargé de représenter le module. C'est cet objet qui
+possède les méthodes génériques chargées d'initialiser, configurer, lancer et
+arrêter un module. Les autres fichiers du module sont une boîte noir inconnu
+pour l'importeur.
 
 """
 
@@ -182,8 +182,8 @@ class Importeur:
         return nom in self.__dict__.keys()
 
     def charger_module(self, parser_cmd, type, nom):
-        """Méthode permettant de charger un module en fonction de son type et de
-        son nom.
+        """Méthode permettant de charger un module en fonction de son type et
+        de son nom.
         
         Si le module est déjà chargé, on ne fait rien.
 

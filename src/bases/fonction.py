@@ -49,7 +49,7 @@ class Fonction:
         self.args = args # sous la forme d'un tuple
         self.kwargs = kwargs # sous la forme d'un dictionnaire
 
-    def exec(self, *args_sup, **kwargs_sup):
+    def executer(self, *args_sup, **kwargs_sup):
         """Cette méthode permet d'exécuter la fonction contenue dans
         self.fonction en lui passant en paramètre :
         - les paramètres contenus dans self.args et self.kwargs
