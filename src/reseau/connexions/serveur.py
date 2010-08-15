@@ -117,7 +117,7 @@ class ConnexionServeur:
         self.clients = {} # un dictionnaire {id_client:client}
 
         # Dictionnaire permettant, depuis un socket, de retrouver l'ID client
-        self.filenos={} # correspondance {fileno_du_socket,id_client}
+        self.filenos = {} # correspondance {fileno_du_socket,id_client}
 
         # Socket serveur
         self.socket  = None
@@ -260,7 +260,7 @@ class ConnexionServeur:
                 pass
             else:
                 # On vérifie qu'on peut ajouter un nouveau client
-                if self.nb_max_connectes>=0 \
+                if self.nb_max_connectes >= 0 \
                         and len(self.clients) >= self.nb_max_connectes:
                     # On refuse la connexion
                     socket.send("Ce serveur ne peut accueillir de connexions " \

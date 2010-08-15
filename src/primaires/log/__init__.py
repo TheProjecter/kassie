@@ -42,7 +42,7 @@ from primaires.log.logger import *
 # Dossier d'enregistrement des fichiers de log
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
 # ligne de commande
-rep_logs = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "logs"
+REP_LOGS = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "logs"
 
 class Log(Module):
     """Classe du module 'log'.
@@ -74,17 +74,17 @@ class Log(Module):
         des fichiers de log a été défini.
         
         """
-        global rep_logs
+        global REP_LOGS
         if "chemin-logs" in self.parser_cmd.keys():
-            rep_logs = self.parser_cmd["chemin-logs"]
+            REP_LOGS = self.parser_cmd["chemin-logs"]
         
         # On construit le répertoire si il n'existe pas
-        if not os.path.exists(rep_logs):
-            os.makedirs(rep_logs)
+        if not os.path.exists(REP_LOGS):
+            os.makedirs(REP_LOGS)
         
         # On met à jour le rep_base de chaque logger
         for logger in self.loggers.values():
-            logger.rep_base = rep_logs
+            logger.rep_base = REP_LOGS
             logger.verif_rep()
 
         Module.config(self)
@@ -111,11 +111,11 @@ class Log(Module):
         créer l'architecture d'enregistrement des logs.
 
         """
-        global rep_logs
-        if nom_fichier=="":
+        global REP_LOGS
+        if nom_fichier == "":
             nom_fichier = "{0}.log".format(nom_logger)
 
-        logger = Logger(rep_logs, sous_rep, nom_fichier, nom_logger)
+        logger = Logger(REP_LOGS, sous_rep, nom_fichier, nom_logger)
         if self.statut == INITIALISE:
             logger.en_fil = False
             logger.verif_rep()

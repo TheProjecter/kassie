@@ -41,7 +41,7 @@ from primaires.anaconf.analyseur import Analyseur
 # Dossier d'enregistrement des fichiers de configuration
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
 # ligne de commande
-rep_config = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "config"
+REP_CONFIG = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "config"
 
 class Anaconf(Module):
     """Classe du module 'anaconf'.
@@ -63,13 +63,13 @@ class Anaconf(Module):
         des fichiers de configuration a été défini.
         
         """
-        global rep_config
+        global REP_CONFIG
         if "chemin-configuration" in self.parser_cmd.keys():
-            rep_config = self.parser_cmd["chemin-configuration"]
+            REP_CONFIG = self.parser_cmd["chemin-configuration"]
         
         # On construit le répertoire si il n'existe pas
-        if not os.path.exists(rep_config):
-            os.makedirs(rep_config)
+        if not os.path.exists(REP_CONFIG):
+            os.makedirs(REP_CONFIG)
         
         Module.config(self)
 
@@ -81,8 +81,8 @@ class Anaconf(Module):
         à ce dictionnaire.
         
         """
-        global rep_config
-        chemin = rep_config + os.sep + chemin
+        global REP_CONFIG
+        chemin = REP_CONFIG + os.sep + chemin
         # On construit le répertoire si il n'existe pas
         rep = os.path.split(chemin)[0]
         if not os.path.exists(rep):

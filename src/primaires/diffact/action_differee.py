@@ -55,9 +55,9 @@ class ActionDifferee:
         """Return True si le temps d'échéance est passé, False sinon."""
         return time.time() >= self.echeance
 
-    def exec(self):
+    def executer(self):
         """Exécution de la fonction. On redirige simplement vers
         self.fonction.exec().
         
         """
-        self.fonction.exec()
+        self.fonction.executer()

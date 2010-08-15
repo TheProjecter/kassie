@@ -134,4 +134,4 @@ class Diffact(Module):
                 # On la supprime avant toute chose
                 self.retirer_action(nom)
                 # On l'exécute ensuite
-                action.exec()
+                action.executer()

@@ -56,6 +56,7 @@ class ClientConnecte:
         - les infos de connexion, un tuple contenant :
             - l'adresse IP du client
             - le port sortant du client
+
         """
         self.id = ClientConnecte.id_courant
         ClientConnecte.id_courant += 1
@@ -96,9 +97,9 @@ class ClientConnecte:
         """
         # Compatibilité telnet
         car_eff = b"\x08"
-        while message.count(car_eff)>0:
+        while message.count(car_eff) > 0:
             pos = message.find(car_eff)
-            if pos>0:
+            if pos > 0:
                 message = message[:pos-1] + message[pos+1:]
             else:
                 message = message[pos+1:]
@@ -106,7 +107,7 @@ class ClientConnecte:
         # Compatibilité Tintin++
         car_eff = 195
         n_message = b""
-        for i,car in enumerate(message):
+        for i, car in enumerate(message):
             if not (car == car_eff and i+1<len(message) and \
                     bytes([message[i+1]]).isalpha()):
                 n_message += bytes([car])

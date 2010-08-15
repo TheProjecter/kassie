@@ -34,13 +34,15 @@ Chaque module primaire possède son propre package.
 
 Les modules primaires ayant des relations d'inter-dépendance entre eux, un
 ordre d'instanciation est défini dans ce fichier. Tout ce qui n'est pas dans
-l'ordre d'instanciation sera instancié par la suite, après les modules définis.
+l'ordre d'instanciation sera instancié par la suite, après les modules défi-
+nis.
 
 Règles d'interdépendance :
 - un module primaire peut faire appel aux autres modules primaires
 - un module primaire ne peut faire appel à un module secondaire, sauf
   si il utilise des méthodes génériques aux modules servant à modifier
   son état, ou à l'interprétation de commandes
+- le corps du projget peut interragir avec les modules primaires
 
 Pour obtenir une aide sur chaque module primaire, consulter le fichier
 __init__.py du package concerné.

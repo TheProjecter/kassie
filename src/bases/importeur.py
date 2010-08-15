@@ -181,7 +181,7 @@ class Importeur:
         """
         return nom in self.__dict__.keys()
 
-    def charger_module(self, parser_cmd, type, nom):
+    def charger_module(self, parser_cmd, m_type, nom):
         """Méthode permettant de charger un module en fonction de son type et
         de son nom.
         
@@ -191,9 +191,9 @@ class Importeur:
         l'objet gérant le module.
         
         """
-        if type == "primaire":
+        if m_type == "primaire":
             rep = REP_PRIMAIRES
-        elif type == "secondaire":
+        elif m_type == "secondaire":
             rep = REP_SECONDAIRES
         else:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
@@ -207,7 +207,7 @@ class Importeur:
                     nom.capitalize())
             setattr(self, nom, module(self, parser_cmd))
 
-    def decharger_module(self, type, nom):
+    def decharger_module(self, m_type, nom):
         """Méthode permettant de décharger un module.
         
         Elle se charge :
@@ -216,9 +216,9 @@ class Importeur:
         -   de supprimer l'instance du module dans self
 
         """
-        if type == "primaire":
+        if m_type == "primaire":
             rep = REP_PRIMAIRES
-        elif type == "secondaire":
+        elif m_type == "secondaire":
             rep = REP_SECONDAIRES
         else:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
@@ -235,14 +235,14 @@ class Importeur:
         else:
             print("{0} n'est pas dans les attributs de l'importeur".format(nom))
 
-    def recharger_module(self, parser_cmd, type, nom):
+    def recharger_module(self, parser_cmd, m_type, nom):
         """Cette méthode permet de recharger un module. Elle passe par :
         -   decharger_module
         -   charger_module
         
         """
-        self.decharger_module(parser_cmd, type, nom)
-        self.charger_module(type, nom)
+        self.decharger_module(parser_cmd, m_type, nom)
+        self.charger_module(m_type, nom)
 
     def config_module(self, nom):
         """Méthode chargée de configurer ou reconfigurer un module."""

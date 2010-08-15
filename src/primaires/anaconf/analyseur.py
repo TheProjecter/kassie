@@ -160,7 +160,7 @@ class Analyseur:
             except IOError:
                 print("Le fichier de configuration ne peut pas être édité")
             else:
-                for nom,donnee in self.__dict__.items():
+                for nom, donnee in self.__dict__.items():
                     fichier_conf.write("{0} = {1}\n".format(nom, donnee))
                 fichier_conf.close()
 
@@ -175,5 +175,5 @@ class Analyseur:
             attribut = object.__getattribute__(self, nom)
             return eval(attribut)
         else:
-            raise ValueError("la donnée '{0}' n'a pu être trouvée dans cette " \
-                    "configuration".format(nom))
+            raise ValueError("la donnée '{0}' n'a pu être trouvée dans " \
+                    "cette configuration".format(nom))

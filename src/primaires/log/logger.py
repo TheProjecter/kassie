@@ -43,7 +43,7 @@ WARN = WARNING = 2
 FATAL = ERROR = EXCEPTION = 3
 
 # Dictionnaire des niveaux
-niveaux = {
+NIVEAUX = {
     INFO: "info",
     WARNING: "warning",
     DEBUG: "debug",
@@ -51,9 +51,9 @@ niveaux = {
 }
 
 # Correspondances inverses
-rev_niveaux = {}
-for cle,val in niveaux.items():
-    rev_niveaux[val] = cle
+REV_NIVEAUX = {}
+for cle, val in NIVEAUX.items():
+    REV_NIVEAUX[val] = cle
 
 # Format (voir méthode formater de la classe Logger)
 FORMAT = "%date% %heurems% [%niveau%] : %message%"
@@ -136,11 +136,11 @@ class Logger:
         """Permet de changer le niveau minimum de filtrage des messages.
         ATTENTION : le niveau est donné sous la forme d'une chaîne.
         En efffet, les autres modules n'ont pas accès aux différents niveaux
-        de message. On se base sur le dictionnaire rev_niveaux pour trouver
+        de message. On se base sur le dictionnaire REV_NIVEAUX pour trouver
         l'entier correspondant.
         
         """
-        self.niveau_min = rev_niveaux[niveau_str]
+        self.niveau_min = REV_NIVEAUX[niveau_str]
 
     def verif_rep(self):
         """Cette méthode vérifie si le répertoire de log existe.
@@ -201,7 +201,7 @@ class Logger:
         """
         doit = False
         if module == self.nom:
-            if self.console is True and self.niveau_min<=niveau:
+            if self.console is True and self.niveau_min <= niveau:
                 doit = True
         return doit
 
@@ -225,7 +225,7 @@ class Logger:
         Les méthodes info, debug, warning et fatal redirigent dessus.
         
         """
-        s_niveau = niveaux[niveau]
+        s_niveau = NIVEAUX[niveau]
         f_message = self.formater(s_niveau, message)
         if self.en_fil:
             self.fil_attente.append(Message(s_niveau, message, f_message))
